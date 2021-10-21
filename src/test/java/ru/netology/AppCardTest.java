@@ -7,8 +7,6 @@ import org.openqa.selenium.Keys;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
@@ -68,6 +66,22 @@ public class AppCardTest {
     }
 
     @Test
+    public void shouldReturnErrorWhenCityIsEmpty() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(String.valueOf(date));
+        form.$("[data-test-id=name] input").setValue("Василий Пупкин");
+        form.$("[data-test-id=phone] input").setValue("+79271112233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $(".input_invalid[data-test-id=city] .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Поле обязательно для заполнения"));
+
+    }
+
+    @Test
     public void shouldReturnErrorWhenNameNotInKirilitsa() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
@@ -82,9 +96,24 @@ public class AppCardTest {
                 .shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
 
     }
+    @Test
+    public void shouldReturnErrorWhenNameWithSigns() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(String.valueOf(date));
+        form.$("[data-test-id=name] input").setValue("Вася@");
+        form.$("[data-test-id=phone] input").setValue("+79271112233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $(".input_invalid[data-test-id=name] .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+
+    }
 
     @Test
-    public void shouldReturnErrorWhenWrongFormatOfTel() {
+    public void shouldReturnErrorWhenWrongFormatOfTelWithoutPlus() {
         open("http://localhost:9999");
         SelenideElement form = $(".form");
         form.$("[data-test-id=city] input").setValue("Майкоп");
@@ -96,6 +125,54 @@ public class AppCardTest {
         form.$(".button").find(byText("Забронировать")).click();
         $(".input_invalid[data-test-id=phone] .input__sub").shouldBe(appear)
                 .shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenWrongFormatOfTelWith10Numbers() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(String.valueOf(date));
+        form.$("[data-test-id=name] input").setValue("Вася");
+        form.$("[data-test-id=phone] input").setValue("+9271112233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $(".input_invalid[data-test-id=phone] .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenWrongFormatOfTelWith12Numbers() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(String.valueOf(date));
+        form.$("[data-test-id=name] input").setValue("Вася");
+        form.$("[data-test-id=phone] input").setValue("+927110012233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $(".input_invalid[data-test-id=phone] .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenTelIsEmpty() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(String.valueOf(date));
+        form.$("[data-test-id=name] input").setValue("Вася");
+        form.$("[data-test-id=phone] input").setValue("");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $(".input_invalid[data-test-id=phone] .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Поле обязательно для заполнения"));
 
     }
 
@@ -126,6 +203,55 @@ public class AppCardTest {
         form.$(".button").find(byText("Забронировать")).click();
         $("[data-test-id=date] .input_invalid .input__sub").shouldBe(appear)
                 .shouldHave(exactText("Неверно введена дата"));
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDateIsEmpty() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue("");
+        form.$("[data-test-id=name] input").setValue("Вася");
+        form.$("[data-test-id=phone] input").setValue("+79271112233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $("[data-test-id=date] .input_invalid .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Неверно введена дата"));
+
+    }
+
+
+    @Test
+    public void shouldReturnErrorWhenDateOfMeetingIsToday() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+        form.$("[data-test-id=name] input").setValue("Вася");
+        form.$("[data-test-id=phone] input").setValue("+79271112233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $("[data-test-id=date] .input_invalid .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Заказ на выбранную дату невозможен"));
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDateOfMeetingIsYesterday() {
+        open("http://localhost:9999");
+        SelenideElement form = $(".form");
+        form.$("[data-test-id=city] input").setValue("Майкоп");
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        form.$("[data-test-id=date] input").setValue(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+        form.$("[data-test-id=name] input").setValue("Вася");
+        form.$("[data-test-id=phone] input").setValue("+79271112233");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button").find(byText("Забронировать")).click();
+        $("[data-test-id=date] .input_invalid .input__sub").shouldBe(appear)
+                .shouldHave(exactText("Заказ на выбранную дату невозможен"));
 
     }
 
