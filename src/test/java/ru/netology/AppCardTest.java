@@ -298,26 +298,4 @@ public class AppCardTest {
 
     }
 
-//    @Test
-//    public void shouldChooseDateFromCalendar2WeeksFromNow() {
-//        open("http://localhost:9999");
-//        SelenideElement form = $(".form");
-//        form.$("[data-test-id=city] input").setValue("Майкоп");
-//        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-//        form.$(".input__icon").click();
-//        $$(".calendar__day")
-//
-//                .find(Condition.text(String.valueOf(LocalDate.now().plusWeeks(2).getDayOfMonth())))
-//
-//                .click()
-//
-//        ;
-//        form.$("[data-test-id=name] input").setValue("Вася");
-//        form.$("[data-test-id=phone] input").setValue("+79271112233");
-//        form.$("[data-test-id=agreement]").click();
-//        form.$(".button").find(byText("Забронировать")).click();
-//        $(".notification_visible").shouldBe(appear, Duration.ofSeconds(16));
-//        $("[data-test-id=notification]").shouldHave(text("Встреча успешно забронирована на " + LocalDate.now().plusDays(7).format(DateTimeFormatter.ofPattern("dd.MM.YYYY"))));
-//
-//    }
 }
